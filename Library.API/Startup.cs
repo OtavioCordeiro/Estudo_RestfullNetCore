@@ -37,6 +37,8 @@ namespace Library.API
                 app.UseExceptionHandler();
             }
 
+            app.UseWelcomePage();
+
             app.UseMvc();
         }
     }
