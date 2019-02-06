@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Library.API.Services
 {
-    public class LibraryRepository : ILibraryRepository
+    public class LibraryRepositoryFromDbSql : ILibraryRepository
     {
         private LibraryContext _context;
 
-        public LibraryRepository(LibraryContext context)
+        public LibraryRepositoryFromDbSql(LibraryContext context)
         {
             _context = context;
         }

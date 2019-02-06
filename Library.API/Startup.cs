@@ -31,7 +31,7 @@ namespace Library.API
             var connectionString = _configuration.GetConnectionString("libraryDB");
             services.AddDbContext<LibraryContext>(x => x.UseSqlServer(connectionString));
 
-            services.AddScoped<ILibraryRepository, LibraryRepository>();
+            services.AddScoped<ILibraryRepository, LibraryRepositoryFromMemory>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
