@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using Library.API.Entities;
+using Library.API.Models;
 using Library.API.Services;
 using Library.API.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,9 +43,20 @@ namespace Library.API
                 app.UseExceptionHandler();
             }
 
+            ConfigureMapper();
+
             //libraryContext.EnsureSeedDataForContext();
 
             app.UseMvc();
+        }
+
+        private void ConfigureMapper()
+        {
+            Mapper.Initialize(
+                cfg =>
+                {
+                    cfg.CreateMap<Author, AuthorDto>();
+                });
         }
     }
 }
