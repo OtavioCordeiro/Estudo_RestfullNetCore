@@ -46,7 +46,7 @@ namespace Library.API
                 app.UseExceptionHandler();
             }
 
-            libraryContext.EnsureSeedDataForContext();
+            //libraryContext.EnsureSeedDataForContext();
 
             app.UseMvc();
         }
