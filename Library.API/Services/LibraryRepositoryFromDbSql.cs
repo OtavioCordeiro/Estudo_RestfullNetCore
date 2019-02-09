@@ -69,27 +69,27 @@ namespace Library.API.Services
 
         public Book GetBookForAuthor(Guid authorId, Guid bookId)
         {
-            throw new NotImplementedException();
+            return _context.Books.FirstOrDefault(b => b.Id == bookId && b.AuthorId == authorId);
         }
 
         public IEnumerable<Book> GetBooksForAuthor(Guid authorId)
         {
-            throw new NotImplementedException();
+            return _context.Books.Where(b => b.AuthorId == authorId);
         }
 
         public bool Save()
         {
-            throw new NotImplementedException();
+            return _context.SaveChanges() > 0;
         }
 
         public void UpdateAuthor(Author author)
         {
-            throw new NotImplementedException();
+            _context.Authors.Update(author);
         }
 
         public void UpdateBookForAuthor(Book book)
         {
-            throw new NotImplementedException();
+            _context.Books.Update(book);
         }
     }
 }
