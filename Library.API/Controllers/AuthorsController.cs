@@ -20,24 +20,16 @@ namespace Library.API.Controllers
         [HttpGet]
         public IActionResult GetAuthors()
         {
-            try
-            {
-                throw new Exception("Ocorreu uma exceção - test");
+            throw new Exception();
 
-                var authors = LibraryRepository.GetAuthors();
+            var authors = LibraryRepository.GetAuthors();
 
-                if (authors == null)
-                    return NotFound();
+            if (authors == null)
+                return NotFound();
 
-                var authorsModel = Mapper.Map<IEnumerable<AuthorDto>>(authors);
+            var authorsModel = Mapper.Map<IEnumerable<AuthorDto>>(authors);
 
-                return Ok(authorsModel);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "Ocorreu um erro inesperado. Tente novamente mais tarde - Controller");
-            }
-
+            return Ok(authorsModel);
         }
 
         [HttpGet("{id}")]
