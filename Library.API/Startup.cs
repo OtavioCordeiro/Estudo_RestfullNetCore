@@ -6,6 +6,7 @@ using Library.API.Services;
 using Library.API.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,7 +42,14 @@ namespace Library.API
             }
             else
             {
-                app.UseExceptionHandler();
+                app.UseExceptionHandler(appBuilder =>
+               {
+                   appBuilder.Run(async context =>
+                       {
+                           context.Response.StatusCode = 500;
+                           await context.Response.WriteAsync("Ocorreu um erro inesperado. Tente novamente mais tarde");
+                       });
+               });
             }
 
             ConfigureMapper();
@@ -57,9 +65,9 @@ namespace Library.API
                 cfg =>
                 {
                     cfg.CreateMap<Author, AuthorDto>()
-                        .ForMember(dest => dest.Name, 
+                        .ForMember(dest => dest.Name,
                                     opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
-                        .ForMember(dest => dest.Age, 
+                        .ForMember(dest => dest.Age,
                                     opt => opt.MapFrom(src => src.DateOfBirth.GetCurrentAge()));
                 });
         }

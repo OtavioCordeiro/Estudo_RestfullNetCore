@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Library.API.Controllers
 {
-    [Route("api/")]
+    [Route("api/authors")]
     public class AuthorsController : Controller
     {
         public ILibraryRepository LibraryRepository { get; }
@@ -18,21 +18,29 @@ namespace Library.API.Controllers
         }
 
         [HttpGet]
-        [Route("authors")]
         public IActionResult GetAuthors()
         {
-            var authors = LibraryRepository.GetAuthors();
+            try
+            {
+                throw new Exception("Ocorreu uma exceção - test");
 
-            if (authors == null)
-                return NotFound();
+                var authors = LibraryRepository.GetAuthors();
 
-            var authorsModel = Mapper.Map<IEnumerable<AuthorDto>>(authors);
+                if (authors == null)
+                    return NotFound();
 
-            return new JsonResult(authorsModel);
+                var authorsModel = Mapper.Map<IEnumerable<AuthorDto>>(authors);
+
+                return Ok(authorsModel);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Ocorreu um erro inesperado. Tente novamente mais tarde - Controller");
+            }
+
         }
 
-        [HttpGet]
-        [Route("author/{id}")]
+        [HttpGet("{id}")]
         public IActionResult GetAuthor(Guid id)
         {
             var author = LibraryRepository.GetAuthor(id);
@@ -42,7 +50,7 @@ namespace Library.API.Controllers
 
             var authorModel = Mapper.Map<AuthorDto>(author);
 
-            return new JsonResult(authorModel);
+            return Ok(authorModel);
         }
     }
 }
