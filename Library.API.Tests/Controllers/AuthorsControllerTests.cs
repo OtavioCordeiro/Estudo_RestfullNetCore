@@ -40,7 +40,7 @@ namespace Library.API.Tests.Controllers
         {
             ConfigureMapper();
 
-            sut._libraryRepository.GetAuthors().ReturnsNull();
+            sut.LibraryRepository.GetAuthors().ReturnsNull();
 
             var result = sut.GetAuthors();
 
@@ -49,11 +49,18 @@ namespace Library.API.Tests.Controllers
 
         private void ConfigureMapper()
         {
-            Mapper.Initialize(
-            cfg =>
+            try
             {
-                cfg.CreateMap<Author, AuthorDto>();
-            });
+                var ok = Mapper.Instance;
+            }
+            catch (InvalidOperationException)
+            {
+                Mapper.Initialize(
+                cfg =>
+                {
+                    cfg.CreateMap<Author, AuthorDto>();
+                });
+            }
         }
     }
 }

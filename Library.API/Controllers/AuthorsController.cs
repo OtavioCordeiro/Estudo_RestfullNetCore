@@ -10,17 +10,17 @@ namespace Library.API.Controllers
     [Route("api/authors")]
     public class AuthorsController : Controller
     {
-        public ILibraryRepository _libraryRepository;
+        public ILibraryRepository LibraryRepository { get; }
 
         public AuthorsController(ILibraryRepository libraryRepository)
         {
-            _libraryRepository = libraryRepository ?? throw new ArgumentNullException(nameof(libraryRepository));
+            LibraryRepository = libraryRepository ?? throw new ArgumentNullException(nameof(libraryRepository));
         }
 
         [HttpGet]
         public IActionResult GetAuthors()
         {
-            var authors = _libraryRepository.GetAuthors();
+            var authors = LibraryRepository.GetAuthors();
 
             if (authors == null)
                 return NotFound();
