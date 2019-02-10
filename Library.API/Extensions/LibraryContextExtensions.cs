@@ -1,8 +1,9 @@
 ﻿using FizzWare.NBuilder;
+using Library.API.Entities;
 using System;
 using System.Collections.Generic;
 
-namespace Library.API.Entities
+namespace Library.API.Extensions
 {
     public static class LibraryContextExtensions
     {
@@ -27,7 +28,23 @@ namespace Library.API.Entities
                                             .With(y => y.AuthorId = x.Id)
                                             .Build())
                                     .With(x => x.Id = Guid.NewGuid())
+                                    .With(x => x.DateOfBirth = GetRandomDateOfBirth())
                                 .Build();
+        }
+
+        private static DateTimeOffset GetRandomDateOfBirth()
+        {
+            Random random = new Random();
+
+            int year = random.Next(1980, DateTime.UtcNow.Year - 1);
+            int month = random.Next(1, 13);
+            int day = random.Next(1, 32);
+
+            DateTime dateTime = new DateTime(year, month, day);
+
+            DateTimeOffset dateTimeOffset = new DateTimeOffset(dateTime);
+
+            return dateTimeOffset;
         }
     }
 }
