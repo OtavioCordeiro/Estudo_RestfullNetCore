@@ -18,11 +18,6 @@ namespace Library.API.Tests.Controllers
 {
     public class AuthorsControllerTests
     {
-        public AuthorsControllerTests()
-        {
-            ConfigureTests();
-        }
-
         [Theory, AutoNSubstituteData]
         public void GuardTests(GuardClauseAssertion guardClauseAssertion)
         {
@@ -37,23 +32,6 @@ namespace Library.API.Tests.Controllers
             var result = sut.GetAuthors();
 
             result.Should().BeOfType<JsonResult>();
-        }
-
-        private void ConfigureTests()
-        {
-            var methodName = GetMethodName();
-
-            if (methodName.Equals("GuardTests", StringComparison.InvariantCulture) == false)
-            {
-                ConfigureMapper();
-            }
-        }
-
-        private string GetMethodName()
-        {
-            return GetType().GetMethods()
-                            .Select(m => m.Name)
-                            .FirstOrDefault();
         }
 
         private void ConfigureMapper()
