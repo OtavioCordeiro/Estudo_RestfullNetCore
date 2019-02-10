@@ -24,10 +24,9 @@ namespace Library.API.Extensions
                                 .All()
                                     .With(x => x.Books = Builder<Book>.CreateListOfSize(3)
                                         .All()
-                                            .With(y => y.Id = Guid.NewGuid())
+                                        .With(y => y.Id = Guid.NewGuid())
                                             .With(y => y.AuthorId = x.Id)
                                             .Build())
-                                    .With(x => x.Id = Guid.NewGuid())
                                     .With(x => x.DateOfBirth = GetRandomDateOfBirth())
                                 .Build();
         }
