@@ -2,6 +2,7 @@
 using Library.API.Models;
 using Library.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 
 namespace Library.API.Controllers
@@ -13,7 +14,7 @@ namespace Library.API.Controllers
 
         public AuthorsController(ILibraryRepository libraryRepository)
         {
-            _libraryRepository = libraryRepository;
+            _libraryRepository = libraryRepository ?? throw new ArgumentNullException(nameof(libraryRepository));
         }
 
         [HttpGet]

@@ -17,30 +17,29 @@ namespace Library.API.Tests.Controllers
 {
     public class AuthorsControllerTests
     {
-        AuthorsController _controller;
-
-        public AuthorsControllerTests()
-        {
-            _controller = new AuthorsController(Substitute.For<ILibraryRepository>());
-            Mapper.Initialize(
-            cfg =>
-            {
-                cfg.CreateMap<Author, AuthorDto>();
-            });
-        }
-
         [Theory, AutoNSubstituteData]
         public void GuardTests(GuardClauseAssertion guardClauseAssertion)
         {
             guardClauseAssertion.Verify(typeof(AuthorsController).GetConstructors());
         }
 
-        [Fact]
-        public void GetAuthors_WhenCorrectly()
+        [Theory, AutoNSubstituteData]
+        public void GetAuthors_WhenCorrectly(AuthorsController sut)
         {
-            var result = _controller.GetAuthors();
+            ConfigureMapper();
+
+            var result = sut.GetAuthors();
 
             result.Should().BeOfType<JsonResult>();
+        }
+
+        private void ConfigureMapper()
+        {
+            Mapper.Initialize(
+            cfg =>
+            {
+                cfg.CreateMap<Author, AuthorDto>();
+            });
         }
     }
 }
