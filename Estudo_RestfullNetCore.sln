@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.API", "Library.API\Library.API.csproj", "{64DAD159-9D35-4AF7-B904-0B0BAB0BEB34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.API.Tests", "Library.API.Tests\Library.API.Tests.csproj", "{80AF5662-3854-4C36-934C-478BD62125AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.API.Tests", "Library.API.Tests\Library.API.Tests.csproj", "{80AF5662-3854-4C36-934C-478BD62125AD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D42C92D5-70AC-4DA1-AE24-6C45008EADE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

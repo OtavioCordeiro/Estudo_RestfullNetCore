@@ -10,7 +10,7 @@ namespace Library.API.Controllers
     [Route("api/authors")]
     public class AuthorsController : Controller
     {
-        private ILibraryRepository _libraryRepository;
+        public ILibraryRepository _libraryRepository;
 
         public AuthorsController(ILibraryRepository libraryRepository)
         {
@@ -21,6 +21,9 @@ namespace Library.API.Controllers
         public IActionResult GetAuthors()
         {
             var authors = _libraryRepository.GetAuthors();
+
+            if (authors == null)
+                return NotFound();
 
             var authorsModel = Mapper.Map<IEnumerable<AuthorDto>>(authors);
 

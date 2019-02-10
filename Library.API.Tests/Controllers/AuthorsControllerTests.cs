@@ -8,6 +8,7 @@ using Library.API.Services.Interfaces;
 using Library.API.Tests.AutoData;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,13 +26,25 @@ namespace Library.API.Tests.Controllers
         }
 
         [Theory, AutoNSubstituteData]
-        public void GetAuthors_WhenCorrectly(AuthorsController sut)
+        public void GetAuthors_ShouldReturnJsonResult(AuthorsController sut)
         {
             ConfigureMapper();
 
             var result = sut.GetAuthors();
 
             result.Should().BeOfType<JsonResult>();
+        }
+
+        [Theory, AutoNSubstituteData]
+        public void GetAuthors_WhenNotHaveAuthors(AuthorsController sut)
+        {
+            ConfigureMapper();
+
+            sut._libraryRepository.GetAuthors().ReturnsNull();
+
+            var result = sut.GetAuthors();
+
+            result.Should().BeOfType<NotFoundResult>();
         }
 
         private void ConfigureMapper()
