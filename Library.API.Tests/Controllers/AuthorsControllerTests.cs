@@ -5,15 +5,10 @@ using Library.API.Controllers;
 using Library.API.Entities;
 using Library.API.Extensions;
 using Library.API.Models;
-using Library.API.Services.Interfaces;
 using Library.API.Tests.AutoData;
 using Microsoft.AspNetCore.Mvc;
-using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace Library.API.Tests.Controllers
