@@ -25,7 +25,10 @@ namespace Library.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc(setup =>
+            {
+                setup.ReturnHttpNotAcceptable = true;
+            }).AddXmlSerializerFormatters();
 
             var connectionString = _configuration.GetConnectionString("libraryDB");
             services.AddDbContext<LibraryContext>(x => x.UseSqlServer(connectionString));
