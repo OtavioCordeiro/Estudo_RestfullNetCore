@@ -74,7 +74,9 @@ namespace Library.API.Services
 
         public IEnumerable<Book> GetBooksForAuthor(Guid authorId)
         {
-            return _context.Books.Where(b => b.AuthorId == authorId);
+            var result = _context.Books.Where(b => b.AuthorId == authorId);
+
+            return result.Any() ? result : null;
         }
 
         public bool Save()

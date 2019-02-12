@@ -20,8 +20,6 @@ namespace Library.API.Controllers
         [HttpGet]
         public IActionResult GetAuthors()
         {
-            throw new Exception();
-
             var authors = LibraryRepository.GetAuthors();
 
             if (authors == null)
