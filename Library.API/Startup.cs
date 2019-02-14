@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Library.API
 {
@@ -74,6 +75,8 @@ namespace Library.API
                                     opt => opt.MapFrom(src => src.DateOfBirth.GetCurrentAge()));
 
                     cfg.CreateMap<Book, BookDto>();
+
+                    cfg.CreateMap<AuthorForCreationDto, Author>();
                 });
         }
     }
