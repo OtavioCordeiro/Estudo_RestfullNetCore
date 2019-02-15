@@ -29,5 +29,9 @@ namespace Library.API.Services.Interfaces
         void DeleteBook(Book book);
 
         bool Save();
+
+        bool AuthorNotExists(Guid id);
+
+        bool NotSave();
     }
 }

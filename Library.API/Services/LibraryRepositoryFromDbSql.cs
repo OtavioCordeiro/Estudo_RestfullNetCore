@@ -47,6 +47,11 @@ namespace Library.API.Services
             return _context.Authors.Any(x => x.Id == id);
         }
 
+        public bool AuthorNotExists(Guid id)
+        {
+            return !AuthorExists(id);
+        }
+
         public void DeleteAuthor(Author author)
         {
             _context.Authors.Remove(author);
@@ -77,6 +82,11 @@ namespace Library.API.Services
             var result = _context.Books.Where(b => b.AuthorId == authorId);
 
             return result.Any() ? result : null;
+        }
+
+        public bool NotSave()
+        {
+            return !Save();
         }
 
         public bool Save()

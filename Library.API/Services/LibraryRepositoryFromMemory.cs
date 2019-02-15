@@ -40,6 +40,11 @@ namespace Library.API.Services
             throw new NotImplementedException();
         }
 
+        public bool AuthorNotExists(Guid id)
+        {
+            return !AuthorExists(id);
+        }
+
         public void DeleteAuthor(Author author)
         {
             throw new NotImplementedException();
@@ -68,6 +73,11 @@ namespace Library.API.Services
         public IEnumerable<Book> GetBooksForAuthor(Guid authorId)
         {
             throw new NotImplementedException();
+        }
+
+        public bool NotSave()
+        {
+            return !Save();
         }
 
         public bool Save()
