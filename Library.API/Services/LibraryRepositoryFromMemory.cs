@@ -65,6 +65,11 @@ namespace Library.API.Services
             return authorsInMemory;
         }
 
+        public IEnumerable<Author> GetAuthors(IEnumerable<Guid> ids)
+        {
+            throw new NotImplementedException();
+        }
+
         public Book GetBookForAuthor(Guid authorId, Guid bookId)
         {
             throw new NotImplementedException();

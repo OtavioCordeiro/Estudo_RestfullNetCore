@@ -72,6 +72,14 @@ namespace Library.API.Services
             return _context.Authors.OrderBy(x => x.FirstName).ThenBy(x => x.LastName);
         }
 
+        public IEnumerable<Author> GetAuthors(IEnumerable<Guid> ids)
+        {
+            return _context.Authors.Where(author => ids.Contains(author.Id))
+                .OrderBy(author => author.FirstName)
+                .OrderBy(author => author.LastName)
+                .ToList();
+        }
+
         public Book GetBookForAuthor(Guid authorId, Guid bookId)
         {
             return _context.Books.FirstOrDefault(b => b.Id == bookId && b.AuthorId == authorId);
