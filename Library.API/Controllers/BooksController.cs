@@ -13,7 +13,6 @@ namespace Library.API.Controllers
     [Route("api/authors/{authorId}/books")]
     public class BooksController : Controller
     {
-
         public ILibraryRepository LibraryRepository { get; }
 
         public BooksController(ILibraryRepository libraryRepository)
@@ -50,7 +49,7 @@ namespace Library.API.Controllers
         [HttpPost]
         public IActionResult CreateBookForAuthor(Guid authorId, [FromBody]BookForCreationDto book)
         {
-            if (book == null) return BadRequest();
+            if (book?.Title == null) return BadRequest();
 
             if (LibraryRepository.AuthorNotExists(authorId)) return NotFound();
 
@@ -70,6 +69,31 @@ namespace Library.API.Controllers
                                    bookToReturn);
 
 
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteBookForAuthor(Guid authorId, Guid id)
+        {
+            if (LibraryRepository.AuthorNotExists(authorId))
+            {
+                return NotFound();
+            }
+
+            var book = LibraryRepository.GetBookForAuthor(authorId, id);
+
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            LibraryRepository.DeleteBook(book);
+
+            if (LibraryRepository.NotSave())
+            {
+                throw new Exception($"Deleting book {id} for author {authorId} failed on save.");
+            }
+
+            return NoContent();
         }
     }
 }
