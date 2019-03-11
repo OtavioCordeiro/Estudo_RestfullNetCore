@@ -95,5 +95,36 @@ namespace Library.API.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateBookForAuthor(Guid authorId, Guid id, [FromBody] BookForUpdateDto book)
+        {
+            if (book == null)
+            {
+                return BadRequest();
+            }
+
+            if (LibraryRepository.AuthorNotExists(authorId))
+            {
+                return NotFound();
+            }
+
+            var bookForAuthorFromRepository = LibraryRepository.GetBookForAuthor(authorId, id);
+            if (bookForAuthorFromRepository == null)
+            {
+                return NotFound();
+            }
+
+            Mapper.Map(book, bookForAuthorFromRepository);
+
+            LibraryRepository.UpdateBookForAuthor(bookForAuthorFromRepository);
+
+            if (LibraryRepository.NotSave())
+            {
+                throw new Exception($"Updating book {id} for author {authorId} failed on save.");
+            }
+
+            return NoContent();
+        }
     }
 }
