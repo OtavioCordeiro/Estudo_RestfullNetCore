@@ -50,7 +50,15 @@ namespace Library.API.Controllers
         [HttpPost]
         public IActionResult CreateBookForAuthor(Guid authorId, [FromBody]BookForCreationDto book)
         {
-            if (book?.Title == null) return BadRequest();
+            if (book == null) return BadRequest();
+
+            if (book.Title == book.Description)
+            {
+                ModelState.AddModelError(nameof(BookForCreationDto), "O título e descrição devem ser diferentes.");
+            }
+
+            if (!ModelState.IsValid)
+                return new UnprocessableEntityObjectResult(ModelState);
 
             if (LibraryRepository.AuthorNotExists(authorId)) return NotFound();
 
