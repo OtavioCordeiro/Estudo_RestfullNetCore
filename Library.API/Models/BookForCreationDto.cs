@@ -6,13 +6,8 @@ using System.Threading.Tasks;
 
 namespace Library.API.Models
 {
-    public class BookForCreationDto
+    public class BookForCreationDto : BookForManipulationDto
     {
-        [Required(ErrorMessage = "O título é obrigatório")]
-        [MaxLength(100, ErrorMessage = "O tamanho do título não pode ser maior que 100 caracteres")]
-        public string Title { get; set; }
 
-        [MaxLength(500, ErrorMessage = "O tamanho da descrição não pode ser maior que 500 caracteres")]
-        public string Description { get; set; }
     }
 }

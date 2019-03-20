@@ -76,8 +76,6 @@ namespace Library.API.Controllers
             return CreatedAtRoute("GetBookForAuthor",
                                    new { authorId, bookId = bookToReturn.Id },
                                    bookToReturn);
-
-
         }
 
         [HttpDelete("{id}")]
@@ -112,6 +110,14 @@ namespace Library.API.Controllers
             {
                 return BadRequest();
             }
+
+            if (book.Title == book.Description)
+            {
+                ModelState.AddModelError(nameof(BookForUpdateDto), "O título e descrição devem ser diferentes.");
+            }
+
+            if (!ModelState.IsValid)
+                return new UnprocessableEntityObjectResult(ModelState);
 
             if (LibraryRepository.AuthorNotExists(authorId))
             {
