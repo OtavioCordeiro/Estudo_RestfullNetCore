@@ -174,7 +174,17 @@ namespace Library.API.Controllers
             if (bookForAuthorFromRepo == null)
             {
                 var bookDto = new BookForUpdateDto();
-                patchDocument.ApplyTo(bookDto);
+                patchDocument.ApplyTo(bookDto, ModelState);
+
+                if (bookDto.Title == bookDto.Description)
+                {
+                    ModelState.AddModelError(nameof(BookForUpdateDto), "The provided description should be different from the title.");
+                }
+
+                TryValidateModel(bookDto);
+
+                if (!ModelState.IsValid)
+                    return new UnprocessableEntityObjectResult(ModelState);
 
                 var bookToAdd = Mapper.Map<Book>(bookDto);
                 bookToAdd.Id = id;
@@ -195,7 +205,17 @@ namespace Library.API.Controllers
 
             var bookToPatch = Mapper.Map<BookForUpdateDto>(bookForAuthorFromRepo);
 
-            patchDocument.ApplyTo(bookToPatch);
+            patchDocument.ApplyTo(bookToPatch, ModelState);
+
+            if (bookToPatch.Title == bookToPatch.Description)
+            {
+                ModelState.AddModelError(nameof(BookForUpdateDto), "The provided description should be different from the title.");
+            }
+
+            TryValidateModel(bookToPatch);
+
+            if (!ModelState.IsValid)
+                return new UnprocessableEntityObjectResult(ModelState);
 
             Mapper.Map(bookToPatch, bookForAuthorFromRepo);
 
