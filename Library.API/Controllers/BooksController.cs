@@ -205,7 +205,9 @@ namespace Library.API.Controllers
 
             var bookToPatch = Mapper.Map<BookForUpdateDto>(bookForAuthorFromRepo);
 
-            patchDocument.ApplyTo(bookToPatch, ModelState);
+            //patchDocument.ApplyTo(bookToPatch, ModelState);
+
+            patchDocument.ApplyTo(bookToPatch);
 
             if (bookToPatch.Title == bookToPatch.Description)
             {
