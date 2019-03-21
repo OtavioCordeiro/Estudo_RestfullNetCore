@@ -1,5 +1,6 @@
 ﻿using FizzWare.NBuilder;
 using Library.API.Entities;
+using Library.API.Helpers;
 using Library.API.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -60,7 +61,7 @@ namespace Library.API.Services
             return authorsInMemory.Where(x => x.Id == id).FirstOrDefault();
         }
 
-        public IEnumerable<Author> GetAuthors()
+        public IEnumerable<Author> GetAuthors(AuthorsResourceParameters authorsResourceParameters)
         {
             return authorsInMemory;
         }

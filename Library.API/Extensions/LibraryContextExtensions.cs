@@ -20,7 +20,7 @@ namespace Library.API.Extensions
 
         private static IEnumerable<Author> CreateFakeDefaultAuthors()
         {
-            return Builder<Author>.CreateListOfSize(3)
+            return Builder<Author>.CreateListOfSize(12)
                                 .All()
                                     .With(x => x.Books = Builder<Book>.CreateListOfSize(3)
                                         .All()

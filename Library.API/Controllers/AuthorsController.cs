@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Library.API.Entities;
+using Library.API.Helpers;
 using Library.API.Models;
 using Library.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -19,9 +20,9 @@ namespace Library.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAuthors()
+        public IActionResult GetAuthors(AuthorsResourceParameters authorsResourceParameters)
         {
-            var authors = LibraryRepository.GetAuthors();
+            var authors = LibraryRepository.GetAuthors(authorsResourceParameters);
 
             if (authors == null)
                 return NotFound();
@@ -32,7 +33,7 @@ namespace Library.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetAuthor")]
-        public IActionResult GetAuthor(Guid id)
+        public IActionResult GetAuthor([FromRoute]Guid id)
         {
             var author = LibraryRepository.GetAuthor(id);
 
