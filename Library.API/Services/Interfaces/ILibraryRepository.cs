@@ -7,7 +7,7 @@ namespace Library.API.Services.Interfaces
 {
     public interface ILibraryRepository
     {
-        IEnumerable<Author> GetAuthors(AuthorsResourceParameters authorsResourceParameters);
+        PagedList<Author> GetAuthors(AuthorsResourceParameters authorsResourceParameters);
 
         IEnumerable<Author> GetAuthors(IEnumerable<Guid> ids);
 

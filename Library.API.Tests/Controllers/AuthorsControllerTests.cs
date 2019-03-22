@@ -4,6 +4,7 @@ using FluentAssertions;
 using Library.API.Controllers;
 using Library.API.Entities;
 using Library.API.Extensions;
+using Library.API.Helpers;
 using Library.API.Models;
 using Library.API.Tests.AutoData;
 using Microsoft.AspNetCore.Mvc;
@@ -22,23 +23,23 @@ namespace Library.API.Tests.Controllers
         }
 
         [Theory, AutoNSubstituteData]
-        public void GetAuthors_ShouldReturnJsonResult(AuthorsController sut)
+        public void GetAuthors_ShouldReturnJsonResult(AuthorsController sut, AuthorsResourceParameters authorsResourceParameters)
         {
             ConfigureMapper();
 
-            var result = sut.GetAuthors();
+            var result = sut.GetAuthors(authorsResourceParameters);
 
             result.Should().BeOfType<JsonResult>();
         }
 
         [Theory, AutoNSubstituteData]
-        public void GetAuthors_WhenNotHaveAuthors(AuthorsController sut)
+        public void GetAuthors_WhenNotHaveAuthors(AuthorsController sut, AuthorsResourceParameters authorsResourceParameters)
         {
             ConfigureMapper();
 
-            sut.LibraryRepository.GetAuthors().ReturnsNull();
+            sut.LibraryRepository.GetAuthors(authorsResourceParameters).ReturnsNull();
 
-            var result = sut.GetAuthors();
+            var result = sut.GetAuthors(authorsResourceParameters);
 
             result.Should().BeOfType<NotFoundResult>();
         }

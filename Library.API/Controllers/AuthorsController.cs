@@ -4,6 +4,7 @@ using Library.API.Helpers;
 using Library.API.Models;
 using Library.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -13,19 +14,37 @@ namespace Library.API.Controllers
     public class AuthorsController : Controller
     {
         public ILibraryRepository LibraryRepository { get; }
+        public IUrlHelper UrlHelper { get; }
 
-        public AuthorsController(ILibraryRepository libraryRepository)
+        public AuthorsController(ILibraryRepository libraryRepository, IUrlHelper urlHelper)
         {
             LibraryRepository = libraryRepository ?? throw new ArgumentNullException(nameof(libraryRepository));
+            UrlHelper = urlHelper ?? throw new ArgumentNullException(nameof(urlHelper));
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetAuthors")]
         public IActionResult GetAuthors(AuthorsResourceParameters authorsResourceParameters)
         {
             var authors = LibraryRepository.GetAuthors(authorsResourceParameters);
 
             if (authors == null)
                 return NotFound();
+
+            var previousPageLink = authors.HasPrevious ? CreateAuthorsResourceUri(authorsResourceParameters, ResourceUriType.PreviousPage) : null;
+
+            var nextPageLink = authors.HasNext ? CreateAuthorsResourceUri(authorsResourceParameters, ResourceUriType.NextPage) : null;
+
+            var paginationMetadata = new
+            {
+                totalCount = authors.TotalCount,
+                pageSize = authors.PageSize,
+                currentPage = authors.CurrentPage,
+                totalPages = authors.TotalPages,
+                previousPageLink = previousPageLink,
+                nextPageLink = nextPageLink
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginationMetadata));
 
             var authorsModel = Mapper.Map<IEnumerable<AuthorDto>>(authors);
 
@@ -93,6 +112,34 @@ namespace Library.API.Controllers
             }
 
             return NoContent();
+        }
+
+        private string CreateAuthorsResourceUri(
+            AuthorsResourceParameters authorsResourceParameters,
+            ResourceUriType resourceUriType)
+        {
+            switch (resourceUriType)
+            {
+                case ResourceUriType.PreviousPage:
+                    return UrlHelper.Link("GetAuthors",
+                        new
+                        {
+                            pageNumber = authorsResourceParameters.PageNumber - 1,
+                            pageSize = authorsResourceParameters.PageSize
+                        });
+
+                case ResourceUriType.NextPage:
+                    return UrlHelper.Link("GetAuthors",
+                        new
+                        {
+                            pageNumber = authorsResourceParameters.PageNumber + 1,
+                            pageSize = authorsResourceParameters.PageSize
+
+                        });
+
+                default:
+                    throw new Exception("ResourceUriType not implementaded");
+            }
         }
     }
 }

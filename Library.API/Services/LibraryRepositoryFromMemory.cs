@@ -61,9 +61,17 @@ namespace Library.API.Services
             return authorsInMemory.Where(x => x.Id == id).FirstOrDefault();
         }
 
-        public IEnumerable<Author> GetAuthors(AuthorsResourceParameters authorsResourceParameters)
+        public PagedList<Author> GetAuthors(AuthorsResourceParameters authorsResourceParameters)
         {
-            return authorsInMemory;
+            var beforePaging = authorsInMemory
+                                    .AsQueryable()
+                                    .OrderBy(x => x.FirstName)
+                                    .ThenBy(x => x.LastName);
+
+            return PagedList<Author>.Create(
+                beforePaging,
+                authorsResourceParameters.PageNumber,
+                authorsResourceParameters.PageSize);
         }
 
         public IEnumerable<Author> GetAuthors(IEnumerable<Guid> ids)
