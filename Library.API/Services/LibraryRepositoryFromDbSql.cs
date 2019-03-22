@@ -72,7 +72,15 @@ namespace Library.API.Services
         {
             var collectionBeforePaging = _context.Authors
                                                     .OrderBy(x => x.FirstName)
-                                                    .ThenBy(x => x.LastName);
+                                                    .ThenBy(x => x.LastName)
+                                                    .AsQueryable();
+
+            if (!string.IsNullOrEmpty(authorsResourceParameters.Genre))
+            {
+                var genreForWhereClause = authorsResourceParameters.Genre.Trim().ToLowerInvariant();
+
+                collectionBeforePaging = collectionBeforePaging.Where(x => x.Genre.ToLowerInvariant() == genreForWhereClause);
+            }
 
             return PagedList<Author>.Create(
                 collectionBeforePaging,
