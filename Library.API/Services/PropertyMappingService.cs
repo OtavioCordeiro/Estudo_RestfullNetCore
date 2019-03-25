@@ -28,6 +28,7 @@ namespace Library.API.Services
 
         public PropertyMappingService()
         {
+            PropertyMappings = new List<IPropertyMapping>();
             PropertyMappings.Add(new PropertyMapping<AuthorDto, Author>(AuthorPropertyMapping));
         }
 

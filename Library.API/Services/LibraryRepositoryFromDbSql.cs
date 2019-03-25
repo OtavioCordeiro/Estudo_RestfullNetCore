@@ -1,5 +1,7 @@
 ﻿using Library.API.Entities;
+using Library.API.Extensions;
 using Library.API.Helpers;
+using Library.API.Models;
 using Library.API.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -9,17 +11,20 @@ namespace Library.API.Services
 {
     public class LibraryRepositoryFromDbSql : ILibraryRepository
     {
-        private LibraryContext _context;
+        public LibraryContext Context { get; }
+        public IPropertyMappingService PropertyMappingService { get; }
 
-        public LibraryRepositoryFromDbSql(LibraryContext context)
+        public LibraryRepositoryFromDbSql(LibraryContext context,
+            IPropertyMappingService propertyMappingService)
         {
-            _context = context;
+            Context = context ?? throw new ArgumentNullException(nameof(context));
+            PropertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
         public void AddAuthor(Author author)
         {
             author.Id = Guid.NewGuid();
-            _context.Authors.Add(author);
+            Context.Authors.Add(author);
 
             if (author.Books.Any())
             {
@@ -45,7 +50,7 @@ namespace Library.API.Services
 
         public bool AuthorExists(Guid id)
         {
-            return _context.Authors.Any(x => x.Id == id);
+            return Context.Authors.Any(x => x.Id == id);
         }
 
         public bool AuthorNotExists(Guid id)
@@ -55,25 +60,24 @@ namespace Library.API.Services
 
         public void DeleteAuthor(Author author)
         {
-            _context.Authors.Remove(author);
+            Context.Authors.Remove(author);
         }
 
         public void DeleteBook(Book book)
         {
-            _context.Books.Remove(book);
+            Context.Books.Remove(book);
         }
 
         public Author GetAuthor(Guid id)
         {
-            return _context.Authors.FirstOrDefault(x => x.Id == id);
+            return Context.Authors.FirstOrDefault(x => x.Id == id);
         }
 
         public PagedList<Author> GetAuthors(AuthorsResourceParameters authorsResourceParameters)
         {
-            var collectionBeforePaging = _context.Authors
-                                                    .OrderBy(x => x.FirstName)
-                                                    .ThenBy(x => x.LastName)
-                                                    .AsQueryable();
+            var collectionBeforePaging = Context.Authors.ApplySort(
+                                                            authorsResourceParameters.OrderBy,
+                                                            PropertyMappingService.GetPropertyMapping<AuthorDto, Author>());
 
             if (!string.IsNullOrEmpty(authorsResourceParameters.Genre))
             {
@@ -101,7 +105,7 @@ namespace Library.API.Services
 
         public IEnumerable<Author> GetAuthors(IEnumerable<Guid> ids)
         {
-            return _context.Authors.Where(author => ids.Contains(author.Id))
+            return Context.Authors.Where(author => ids.Contains(author.Id))
                 .OrderBy(author => author.FirstName)
                 .OrderBy(author => author.LastName)
                 .ToList();
@@ -109,12 +113,12 @@ namespace Library.API.Services
 
         public Book GetBookForAuthor(Guid authorId, Guid bookId)
         {
-            return _context.Books.FirstOrDefault(b => b.Id == bookId && b.AuthorId == authorId);
+            return Context.Books.FirstOrDefault(b => b.Id == bookId && b.AuthorId == authorId);
         }
 
         public IEnumerable<Book> GetBooksForAuthor(Guid authorId)
         {
-            var result = _context.Books.Where(b => b.AuthorId == authorId);
+            var result = Context.Books.Where(b => b.AuthorId == authorId);
 
             return result.Any() ? result : null;
         }
@@ -126,17 +130,17 @@ namespace Library.API.Services
 
         public bool Save()
         {
-            return _context.SaveChanges() > 0;
+            return Context.SaveChanges() > 0;
         }
 
         public void UpdateAuthor(Author author)
         {
-            _context.Authors.Update(author);
+            Context.Authors.Update(author);
         }
 
         public void UpdateBookForAuthor(Book book)
         {
-            _context.Books.Update(book);
+            Context.Books.Update(book);
         }
     }
 }
