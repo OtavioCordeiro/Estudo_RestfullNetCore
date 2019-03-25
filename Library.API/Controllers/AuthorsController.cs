@@ -15,16 +15,21 @@ namespace Library.API.Controllers
     {
         public ILibraryRepository LibraryRepository { get; }
         public IUrlHelper UrlHelper { get; }
+        public IPropertyMappingService PropertyMappingService { get; }
 
-        public AuthorsController(ILibraryRepository libraryRepository, IUrlHelper urlHelper)
+        public AuthorsController(ILibraryRepository libraryRepository, IUrlHelper urlHelper, IPropertyMappingService propertyMappingService)
         {
             LibraryRepository = libraryRepository ?? throw new ArgumentNullException(nameof(libraryRepository));
             UrlHelper = urlHelper ?? throw new ArgumentNullException(nameof(urlHelper));
+            PropertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
         [HttpGet(Name = "GetAuthors")]
         public IActionResult GetAuthors(AuthorsResourceParameters authorsResourceParameters)
         {
+            if (!PropertyMappingService.ValidMappingExistsFor<AuthorDto, Author>(authorsResourceParameters.OrderBy))
+                return BadRequest();
+
             var authors = LibraryRepository.GetAuthors(authorsResourceParameters);
 
             if (authors == null)
