@@ -37,7 +37,7 @@ namespace Library.API.Extensions
 
             int year = random.Next(1980, DateTime.UtcNow.Year - 1);
             int month = random.Next(1, 13);
-            int day = random.Next(1, 31);
+            int day = random.Next(1, 29);
 
             DateTime dateTime = new DateTime(year, month, day);
 

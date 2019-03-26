@@ -49,6 +49,8 @@ namespace Library.API
             }));
 
             services.AddTransient<IPropertyMappingService, PropertyMappingService>();
+
+            services.AddTransient<ITypeHelperService, TypeHelperService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
