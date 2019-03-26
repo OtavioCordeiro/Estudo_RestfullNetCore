@@ -62,7 +62,7 @@ namespace Library.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetAuthor")]
-        public IActionResult GetAuthor([FromRoute]Guid id)
+        public IActionResult GetAuthor([FromRoute]Guid id, [FromQuery]string fields)
         {
             var author = LibraryRepository.GetAuthor(id);
 
@@ -71,7 +71,7 @@ namespace Library.API.Controllers
 
             var authorModel = Mapper.Map<AuthorDto>(author);
 
-            return Ok(authorModel);
+            return Ok(authorModel.ShapeData(fields));
         }
 
         [HttpPost]
