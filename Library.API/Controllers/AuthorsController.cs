@@ -104,7 +104,7 @@ namespace Library.API.Controllers
             return NotFound();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "DeleteAuthor")]
         public IActionResult DeleteAuthor(Guid id)
         {
             var authorRepository = LibraryRepository.GetAuthor(id);
@@ -158,6 +158,24 @@ namespace Library.API.Controllers
                 default:
                     throw new Exception("ResourceUriType not implementaded");
             }
+        }
+
+        private IEnumerable<LinkDto> CreateLinksForAuthor(Guid id, string fields)
+        {
+            var links = new List<LinkDto>();
+
+            if (string.IsNullOrWhiteSpace(fields))
+            {
+                links.Add(new LinkDto(UrlHelper.Link("GetAuthor", new { id }), "self", "GET"));
+            }
+            else
+            {
+                links.Add(new LinkDto(UrlHelper.Link("GetAuthor", new { id, fields }), "self", "GET"));
+            }
+
+            links.Add(new LinkDto(UrlHelper.Link("DeleteAuthor", new { id }), "delete_author", "DELETE"));
+
+            return links;
         }
     }
 }
