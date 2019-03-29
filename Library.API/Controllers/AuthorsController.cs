@@ -29,7 +29,7 @@ namespace Library.API.Controllers
         }
 
         [HttpGet(Name = "GetAuthors")]
-        public IActionResult GetAuthors(AuthorsResourceParameters authorsResourceParameters)
+        public IActionResult GetAuthors(AuthorsResourceParameters authorsResourceParameters, [FromHeader(Name = "Accept")] string mediaType)
         {
             if (!PropertyMappingService.ValidMappingExistsFor<AuthorDto, Author>(authorsResourceParameters.OrderBy))
                 return BadRequest();
@@ -41,45 +41,62 @@ namespace Library.API.Controllers
             if (authorsFromRepo == null)
                 return NotFound();
 
-            var previousPageLink = authorsFromRepo.HasPrevious ? CreateAuthorsResourceUri(authorsResourceParameters, ResourceUriType.PreviousPage) : null;
-
-            var nextPageLink = authorsFromRepo.HasNext ? CreateAuthorsResourceUri(authorsResourceParameters, ResourceUriType.NextPage) : null;
-
-            var paginationMetadata = new
-            {
-                totalCount = authorsFromRepo.TotalCount,
-                pageSize = authorsFromRepo.PageSize,
-                currentPage = authorsFromRepo.CurrentPage,
-                totalPages = authorsFromRepo.TotalPages,
-                previousPageLink = previousPageLink,
-                nextPageLink = nextPageLink
-            };
-
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginationMetadata));
-
             var authorsModel = Mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo);
 
-            var links = CreateLinksForAuthors(authorsResourceParameters, authorsFromRepo.HasNext, authorsFromRepo.HasPrevious);
-
-            var shapedAuthors = authorsModel.ShapeData(authorsResourceParameters.Fields);
-
-            var shapedAuthorsWithLinks = shapedAuthors.Select(author =>
-             {
-                 var authorAsDictionary = author as IDictionary<string, object>;
-                 var authorLinks = CreateLinksForAuthor((Guid)authorAsDictionary["Id"], authorsResourceParameters.Fields);
-
-                 authorAsDictionary.Add("links", authorLinks);
-
-                 return authorAsDictionary;
-             });
-
-            var linkedCollectionResource = new
+            if (mediaType == "application/vnd.marvin.hateoas+json")
             {
-                values = shapedAuthorsWithLinks,
-                links = links
-            };
+                var paginationMetadata = new
+                {
+                    totalCount = authorsFromRepo.TotalCount,
+                    pageSize = authorsFromRepo.PageSize,
+                    currentPage = authorsFromRepo.CurrentPage,
+                    totalPages = authorsFromRepo.TotalPages,
+                };
 
-            return Ok(linkedCollectionResource);
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginationMetadata));
+
+                var links = CreateLinksForAuthors(authorsResourceParameters, authorsFromRepo.HasNext, authorsFromRepo.HasPrevious);
+
+                var shapedAuthors = authorsModel.ShapeData(authorsResourceParameters.Fields);
+
+                var shapedAuthorsWithLinks = shapedAuthors.Select(author =>
+                 {
+                     var authorAsDictionary = author as IDictionary<string, object>;
+                     var authorLinks = CreateLinksForAuthor((Guid)authorAsDictionary["Id"], authorsResourceParameters.Fields);
+
+                     authorAsDictionary.Add("links", authorLinks);
+
+                     return authorAsDictionary;
+                 });
+
+                var linkedCollectionResource = new
+                {
+                    values = shapedAuthorsWithLinks,
+                    links = links
+                };
+
+                return Ok(linkedCollectionResource);
+            }
+            else
+            {
+                var previousPageLink = authorsFromRepo.HasPrevious ? CreateAuthorsResourceUri(authorsResourceParameters, ResourceUriType.PreviousPage) : null;
+
+                var nextPageLink = authorsFromRepo.HasNext ? CreateAuthorsResourceUri(authorsResourceParameters, ResourceUriType.NextPage) : null;
+
+                var paginationMetadata = new
+                {
+                    totalCount = authorsFromRepo.TotalCount,
+                    pageSize = authorsFromRepo.PageSize,
+                    currentPage = authorsFromRepo.CurrentPage,
+                    totalPages = authorsFromRepo.TotalPages,
+                    previousPageLink = previousPageLink,
+                    nextPageLink = nextPageLink
+                };
+
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginationMetadata));
+
+                return Ok(authorsModel.ShapeData(authorsResourceParameters.Fields));
+            }
         }
 
         [HttpGet("{id}", Name = "GetAuthor")]

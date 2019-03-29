@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 
 namespace Library.API
 {
@@ -33,6 +35,11 @@ namespace Library.API
             services.AddMvc(setup =>
             {
                 setup.ReturnHttpNotAcceptable = true;
+
+                var jsonOutputFormatter = setup.OutputFormatters.OfType<JsonOutputFormatter>().FirstOrDefault();
+
+                jsonOutputFormatter?.SupportedMediaTypes.Add("application/vnd.marvin.hateoas+json");
+
             }).AddXmlSerializerFormatters();
 
             var connectionString = _configuration.GetConnectionString("libraryDB");
