@@ -20,15 +20,23 @@ namespace Library.API.Extensions
 
         private static IEnumerable<Author> CreateFakeDefaultAuthors()
         {
-            return Builder<Author>.CreateListOfSize(12)
+            var authors = Builder<Author>.CreateListOfSize(12)
                                 .All()
-                                    .With(x => x.Books = Builder<Book>.CreateListOfSize(3)
-                                        .All()
-                                        .With(y => y.Id = Guid.NewGuid())
-                                            .With(y => y.AuthorId = x.Id)
-                                            .Build())
-                                    .With(x => x.DateOfBirth = GetRandomDateOfBirth())
-                                .Build();
+                                    .With(x => x.Books = Builder<Book>.CreateListOfSize(3).Build())
+                                    .With(x => x.DateOfBirth = GetRandomDateOfBirth()).Build();
+
+            int i = 1;
+
+            foreach (var author in authors)
+            {
+                foreach (var book in author.Books)
+                {
+                    book.Id = new Guid(i++.ToString().PadLeft(32, '0'));
+                }
+            }
+
+            return authors;
+
         }
 
         private static DateTimeOffset GetRandomDateOfBirth()
