@@ -119,11 +119,38 @@ namespace Library.API.Controllers
         }
 
         [HttpPost(Name = "CreateAuthor")]
+        [RequestHeaderMatchesMediaType("Content-Type", new[] { "application/vnd.marvin.author.full+json" })]
         public IActionResult CreateAuthor([FromBody] AuthorForCreationDto request)
         {
             if (request == null) return BadRequest();
 
             Author authorEntity = Mapper.Map<Author>(request);
+
+            LibraryRepository.AddAuthor(authorEntity);
+
+            if (!LibraryRepository.Save())
+            {
+                throw new Exception("Ocorreu um problema ao salvar a criação do autor");
+            };
+
+            var authorToReturn = Mapper.Map<AuthorDto>(authorEntity);
+
+            var links = CreateLinksForAuthor(authorToReturn.Id, null);
+
+            var linkedResourceToReturn = authorToReturn.ShapeData(null) as IDictionary<string, object>;
+
+            linkedResourceToReturn.Add("links", links);
+
+            return CreatedAtRoute("GetAuthor", new { id = linkedResourceToReturn["Id"] }, linkedResourceToReturn);
+        }
+
+        [HttpPost(Name = "CreateAuthorWithDateOfDeath")]
+        [RequestHeaderMatchesMediaType("Content-Type", new[] { "application/vnd.marvin.authorwithdateofdeath.full+json" })]
+        public IActionResult CreateAuthorWithDateOfDeath([FromBody] AuthorForCreationWithDateOfDeathDto author)
+        {
+            if (author == null) return BadRequest();
+
+            Author authorEntity = Mapper.Map<Author>(author);
 
             LibraryRepository.AddAuthor(authorEntity);
 

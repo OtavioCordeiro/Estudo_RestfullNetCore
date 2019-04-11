@@ -37,6 +37,9 @@ namespace Library.API
 
                 var jsonOutputFormatter = setup.OutputFormatters.OfType<JsonOutputFormatter>().FirstOrDefault();
 
+                jsonOutputFormatter?.SupportedMediaTypes.Add("application/vnd.marvin.author.full+json");
+                jsonOutputFormatter?.SupportedMediaTypes.Add("application/vnd.marvin.authorwithdateofdeatch.full+json");
+
                 jsonOutputFormatter?.SupportedMediaTypes.Add("application/vnd.marvin.hateoas+json");
 
             }).AddXmlSerializerFormatters();
@@ -108,11 +111,13 @@ namespace Library.API
                         .ForMember(dest => dest.Name,
                                     opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
                         .ForMember(dest => dest.Age,
-                                    opt => opt.MapFrom(src => src.DateOfBirth.GetCurrentAge()));
+                                    opt => opt.MapFrom(src => src.DateOfBirth.GetCurrentAge(src.DateOfDeath)));
 
                     cfg.CreateMap<Book, BookDto>();
 
                     cfg.CreateMap<AuthorForCreationDto, Author>();
+
+                    cfg.CreateMap<AuthorForCreationWithDateOfDeathDto, Author>();
 
                     cfg.CreateMap<BookForCreationDto, Book>();
 
