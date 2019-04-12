@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AspNetCoreRateLimit;
+using AutoMapper;
 using Library.API.Entities;
 using Library.API.Extensions;
 using Library.API.Models;
@@ -64,14 +65,38 @@ namespace Library.API
             services.AddHttpCacheHeaders(
                 (expirationModelOptions) =>
                 {
-                    expirationModelOptions.MaxAge = 60;
+                    expirationModelOptions.MaxAge = 10;
                 },
                 (validationModelOptions) =>
                 {
                     validationModelOptions.MustRevalidate = true;
                 });
 
+            services.AddMemoryCache();
+
+            services.Configure<IpRateLimitOptions>((options) =>
+            {
+                options.GeneralRules = new System.Collections.Generic.List<RateLimitRule>()
+                {
+                    new RateLimitRule()
+                    {
+                        Endpoint = "*",
+                        Limit = 3,
+                        Period = "30s"
+                    },
+                    new RateLimitRule()
+                    {
+                        Endpoint = "*",
+                        Limit = 2,
+                        Period = "10s"
+                    }
+                };
+            });
+
             services.AddResponseCaching();
+
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
@@ -110,6 +135,8 @@ namespace Library.API
             ConfigureMapper();
 
             libraryContext.EnsureSeedDataForContext();
+
+            app.UseIpRateLimiting();
 
             app.UseResponseCaching();
 
